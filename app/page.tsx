@@ -30,6 +30,7 @@ export default function Page() {
           prompt: val,
           negative_prompt: "face, ugly, deformed",
         },
+        pollInterval: 400,
       });
       setImageUrl(result.images[0].url);
     } catch (error) {}
