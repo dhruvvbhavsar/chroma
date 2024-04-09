@@ -4,9 +4,30 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const title = "chróma";
+const description = "dream faster with chróma";
+
 export const metadata: Metadata = {
-  title: "chróma",
-  description: "dream faster with chróma",
+  title,
+  description,
+  metadataBase: new URL("https://chroma-neon.vercel.app/"),
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-US": "/en-US",
+      "de-DE": "/de-DE",
+    },
+  },
+  openGraph: {
+    title,
+    description,
+  },
+  twitter: {
+    title,
+    description,
+    card: "summary_large_image",
+    creator: "@devsbond007",
+  },
 };
 
 export default function RootLayout({
