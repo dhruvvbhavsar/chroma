@@ -1,112 +1,126 @@
+"use client";
+import { Textarea } from "@/components/ui/textarea";
+import * as fal from "@fal-ai/serverless-client";
+import React, { useState, useEffect } from "react";
+import { useDebounce } from "use-debounce";
+import { extractColors } from "extract-colors";
 import Image from "next/image";
+import { SparklesCore } from "@/components/ui/sparkles";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import Link from "next/link";
 
-export default function Home() {
+fal.config({
+  proxyUrl: "/api/fal/proxy",
+});
+
+export default function Page() {
+  const [imageUrl, setImageUrl] = useState(null);
+  const [val, setVal] = useDebounce(
+    "beautiful flowers",
+    300
+  );
+  const [bgColor, setBgColor] = useState("#fff");
+  const [textColor, setTextColor] = useState("#000");
+
+  const fetchImage = async () => {
+    try {
+      const result: any = await fal.subscribe("fal-ai/fast-turbo-diffusion", {
+        input: {
+          prompt: val,
+          negative_prompt: "face, ugly, deformed",
+        },
+      });
+      setImageUrl(result.images[0].url);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, [val]);
+
+  const getColorFromURL = async (url: string) => {
+    try {
+      const colors = await extractColors(url);
+      return {
+        bg: colors[colors.length - 1].hex ?? "#fff",
+        text: colors[0].hex ?? "#000",
+      };
+    } catch (error) {
+      console.error("Error getting color:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (imageUrl) {
+      getColorFromURL(imageUrl).then((color) => {
+        if (color) {
+          setBgColor(color.bg as string);
+          setTextColor(color.text as string);
+        }
+      });
+    }
+  }, [imageUrl]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <main
+      style={{ backgroundColor: bgColor }}
+      className="h-screen p-2 flex flex-col justify-center items-center"
+    >
+      <div>
+        <h1
+          className="md:text-7xl text-3xl lg:text-9xl font-bold text-center relative z-20"
+          style={{ color: textColor }}
+        >
+          chróma
+        </h1>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+      <div className="w-full absolute inset-0 z-0 h-screen">
+        <SparklesCore
+          id="tsparticlesfullpage"
+          background="transparent"
+          minSize={1.2}
+          maxSize={2.4}
+          particleDensity={100}
+          className="w-full h-full"
+          particleColor={textColor}
         />
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div className="z-10">
+        {imageUrl ? (
+          <div className="relative">
+            <Image
+              className="rounded-md"
+              height={512}
+              width={512}
+              src={imageUrl}
+              alt="Generated image"
+            />
+            <br />
+            <Link href={imageUrl} className="absolute top-2 right-2" download="generated-image.jpg">
+              <Button variant={"link"} size={"icon"}>
+                <Download style={{color: bgColor}} size={18} />
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <p>Loading image...</p>
+        )}
+        <br />
+        <Textarea
+          className="max-w-lg text-sm sm:text-lg placeholder:text-sm sm:placeholder:text-lg font-mono opacity-40"
+          spellCheck={false}
+          defaultValue={val}
+          onChange={(e) => setVal(e.target.value)}
+          placeholder="Enter your prompt here"
+        />
+      </div>
+      <div
+        className="text-center text-base font-semibold absolute inset-x-0 bottom-4"
+        style={{ color: textColor }}
+      >
+        <p>© 2024 Made by Dhruv.</p>
+        <p>All Rights Reserved.</p>
       </div>
     </main>
   );
