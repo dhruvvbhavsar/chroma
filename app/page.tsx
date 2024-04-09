@@ -18,7 +18,7 @@ export default function Page() {
   const [imageUrl, setImageUrl] = useState(null);
   const [val, setVal] = useDebounce(
     "beautiful flowers",
-    300
+    450
   );
   const [bgColor, setBgColor] = useState("#fff");
   const [textColor, setTextColor] = useState("#000");
