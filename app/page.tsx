@@ -16,10 +16,7 @@ fal.config({
 
 export default function Page() {
   const [imageUrl, setImageUrl] = useState(null);
-  const [val, setVal] = useDebounce(
-    "beautiful flowers",
-    450
-  );
+  const [val, setVal] = useDebounce("beautiful flowers", 450);
   const [bgColor, setBgColor] = useState("#fff");
   const [textColor, setTextColor] = useState("#000");
 
@@ -66,17 +63,9 @@ export default function Page() {
   return (
     <main
       style={{ backgroundColor: bgColor }}
-      className="h-screen p-2 flex flex-col justify-center items-center"
+      className="px-2 min-h-screen sm:px-4 md:px-6 lg:px-8 xl:px-10"
     >
-      <div>
-        <h1
-          className="md:text-7xl text-3xl lg:text-9xl font-bold text-center relative z-20"
-          style={{ color: textColor }}
-        >
-          chróma
-        </h1>
-      </div>
-      <div className="w-full absolute inset-0 z-0 h-screen">
+      <div className="w-full min-h-screen absolute inset-0 z-0">
         <SparklesCore
           id="tsparticlesfullpage"
           background="transparent"
@@ -87,9 +76,15 @@ export default function Page() {
           particleColor={textColor}
         />
       </div>
-      <div className="z-10">
+      <div className="flex flex-col items-center justify-center z-10 space-y-4">
+        <h1
+          className="text-7xl lg:text-9xl font-bold text-center relative z-20"
+          style={{ color: textColor }}
+        >
+          chróma
+        </h1>
         {imageUrl ? (
-          <div className="relative">
+          <div className="relative max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl space-y-4">
             <Image
               className="rounded-md"
               height={512}
@@ -97,32 +92,34 @@ export default function Page() {
               src={imageUrl}
               alt="Generated image"
             />
-            <br />
-            <Link href={imageUrl} className="absolute top-2 right-2" download="generated-image.jpg">
+            <Link
+              href={imageUrl}
+              className="absolute top-2 right-2"
+              download="generated-image.jpg"
+            >
               <Button variant={"link"} size={"icon"}>
-                <Download style={{color: bgColor}} size={18} />
+                <Download style={{ color: bgColor }} size={18} />
               </Button>
             </Link>
+            <Textarea
+              className="text-sm sm:text-lg placeholder:text-sm sm:placeholder:text-lg font-mono opacity-40"
+              spellCheck={false}
+              defaultValue={val}
+              onChange={(e) => setVal(e.target.value)}
+              placeholder="Enter your prompt here"
+            />
           </div>
         ) : (
           <p>Loading image...</p>
         )}
-        <br />
-        <Textarea
-          className="max-w-lg text-sm sm:text-lg placeholder:text-sm sm:placeholder:text-lg font-mono opacity-40"
-          spellCheck={false}
-          defaultValue={val}
-          onChange={(e) => setVal(e.target.value)}
-          placeholder="Enter your prompt here"
-        />
       </div>
-      <div
-        className="text-center text-base font-semibold absolute inset-x-0 bottom-4"
+      <footer
+        className="text-center text-base font-semibold mt-4 md:mt-8"
         style={{ color: textColor }}
       >
-        <p>© 2024 Made by Dhruv.</p>
+        <p>&copy; 2024 Made by Dhruv.</p>
         <p>All Rights Reserved.</p>
-      </div>
+      </footer>
     </main>
   );
 }
