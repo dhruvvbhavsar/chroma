@@ -1,0 +1,9 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "Picostone Pro",
+      "package_name": "com.pico_app",
+      "sha256_cert_fingerprints":
+      ["CE:A4:57:17:44:92:57:EC:5F:DE:C1:E2:44:A8:80:71:2E:B5:7F:A8:BF:89:0E:5C:D9:08:DD:82:EF:88:56:46"]
+    }
+  }]
